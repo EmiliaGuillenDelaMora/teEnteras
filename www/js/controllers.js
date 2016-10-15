@@ -1,28 +1,49 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {})
+/*Log in*/
+.controller('loginController', function($scope, $state, $http, $timeout){
+  $scope.$on("$ionicView.enter", function(event, data){
+    $scope.user = {};
+  });
 
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+  $scope.login = function(){
+    return $state.go('app.menu'); //FIXME
 
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
+
+    if(!$scope.user.email){
+      $timeout(function(){ $scope.errorMessage = ''; }, 1000);
+      return $scope.errorMessage = "Invalid Email Address";
+    }
+    var request = $http.post('http://localhost:3000/login', $scope.user);
+
+    request.success(function(){
+      $state.go('app.menu');
+    });
+
+    request.error(function(error){
+      $scope.errorMessage = error;
+      $timeout(function(){
+        $scope.errorMessage = '';
+        //$state.go('app.menu'); //FIXME
+      }, 1000);
+    });
   };
 })
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
+/*Menu*/
+.controller('menuController', function($scope, Menu, $state){
+  $scope.menus = Menu.all();
+  $scope.select = function(menu) {
+    //TODO load from endpoint
+    console.log('Look ma : ', menu.name);
+    $state.go('app.map');
+  };
 })
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
-});
+/*Map*/
+.controller('mapController', function($scope) {
+  document.addEventListener("deviceready", function() {
+    var div = document.getElementById("map_canvas");
+    var map = plugin.google.maps.Map.getMap(div);
+  });
+})

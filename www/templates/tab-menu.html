@@ -1,0 +1,10 @@
+<ion-view view-title="Chats">
+  <ion-content>
+    <ion-list>
+      <ion-item  ng-click="select(menu)" class="item-remove-animate item-avatar item-icon-right" ng-repeat="menu in menus" type="item-text-wrap">
+        <img ng-src="{{chat.logo}}">
+        <h2>{{menu.name}}</h2>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
